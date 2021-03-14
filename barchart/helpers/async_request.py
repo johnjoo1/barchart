@@ -25,12 +25,14 @@ class AsyncRequest:
 		self._parser_type = data
 	
 	async def make_requests(self, url):
+		print(url)
 		session = AsyncHTMLSession()
 		response = await session.get(url, headers={'User-Agent': generate_user_agent()})
 		HttpErrors.handle_errors(response)
 		try:
 			response_url = await response.html.arender(wait=5.0, timeout=self.timeout, script=self.js_script())
 		except pyppeteer.errors.TimeoutError:
+			response.html.raw_html
 			raise TimeoutError
 
 		if self._is_unique_page_request(response.html.url, response_url):
